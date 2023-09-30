@@ -1,9 +1,10 @@
 {
-  "name": "go-service-template",
+  "name": "gossip-dev",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "features": {
     "ghcr.io/devcontainers/features/go": {},
-    "ghcr.io/devcontainers/features/docker-outside-of-docker": {}
+    "ghcr.io/devcontainers/features/docker-outside-of-docker": {},
+    "ghcr.io/jungaretti/features/make": {}
   },
   "customizations": {
     "vscode": {
