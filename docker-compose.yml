@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  gossiper-0:
+    image: gossiper
+    hostname: gossiper-0
+    networks:
+      - test
+  gossiper-1:
+    image: gossiper
+    hostname: gossiper-1
+    networks:
+      - test
+  gossiper-2:
+    image: gossiper
+    hostname: gossiper-2
+    networks:
+      - test
+  gossiper-3:
+    image: gossiper
+    hostname: gossiper-3
+    networks:
+      - test
+  gossiper-4:
+    image: gossiper
+    hostname: gossiper-4
+    networks:
+      - test
+networks:
+  test:

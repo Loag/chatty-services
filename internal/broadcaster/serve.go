@@ -5,10 +5,11 @@ import (
 	"net"
 	"os"
 	"slices"
+	"sync"
 	"time"
 )
 
-func Start() {
+func Start(wg *sync.WaitGroup) {
 	broadcastAddress := "255.255.255.255:8000"
 
 	conn, err := net.Dial("udp", broadcastAddress)
@@ -17,9 +18,11 @@ func Start() {
 		os.Exit(1)
 	}
 	defer conn.Close()
-	hostname, err := os.Hostname()
+	hostname, _ := os.Hostname()
 	// Infinite loop to keep sending broadcast messages
+	i := 0
 	for {
+		i++
 		message := []byte(hostname + ":8080")
 		_, err := conn.Write(message)
 		if err != nil {
@@ -28,12 +31,17 @@ func Start() {
 		}
 
 		time.Sleep(2 * time.Second)
+
+		if i == 5 {
+			break
+		}
 	}
+	wg.Done()
 }
 
-func Listen(servers *[]string) {
+func Listen(servers *[]string, wg *sync.WaitGroup) {
 	address := ":8000"
-	hostname, err := os.Hostname()
+	hostname, _ := os.Hostname()
 
 	// Create UDP Address
 	udpAddress, err := net.ResolveUDPAddr("udp", address)
@@ -52,8 +60,11 @@ func Listen(servers *[]string) {
 
 	buf := make([]byte, 1024)
 
+	i := 0
+
 	// Infinite loop to keep listening for messages
 	for {
+		i++
 		n, addr, err := conn.ReadFromUDP(buf)
 		if err != nil {
 			fmt.Println(err)
@@ -65,5 +76,11 @@ func Listen(servers *[]string) {
 		if !slices.Contains(*servers, s) && s != (hostname+":8080") {
 			*servers = append(*servers, s)
 		}
+
+		if i == 50 {
+			break
+		}
 	}
+
+	wg.Done()
 }
