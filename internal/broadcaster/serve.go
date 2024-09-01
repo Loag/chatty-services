@@ -19,7 +19,7 @@ func Start(wg *sync.WaitGroup) {
 	}
 	defer conn.Close()
 	hostname, _ := os.Hostname()
-	// Infinite loop to keep sending broadcast messages
+
 	i := 0
 	for {
 		i++
@@ -43,14 +43,12 @@ func Listen(servers *[]string, wg *sync.WaitGroup) {
 	address := ":8000"
 	hostname, _ := os.Hostname()
 
-	// Create UDP Address
 	udpAddress, err := net.ResolveUDPAddr("udp", address)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	// Create a UDP connection
 	conn, err := net.ListenUDP("udp", udpAddress)
 	if err != nil {
 		fmt.Println(err)
@@ -62,7 +60,6 @@ func Listen(servers *[]string, wg *sync.WaitGroup) {
 
 	i := 0
 
-	// Infinite loop to keep listening for messages
 	for {
 		i++
 		n, addr, err := conn.ReadFromUDP(buf)
@@ -73,6 +70,7 @@ func Listen(servers *[]string, wg *sync.WaitGroup) {
 		fmt.Printf("Received %s from %s\n", string(buf[:n]), addr)
 
 		s := string(buf[:n])
+		// check that it is not the sender
 		if !slices.Contains(*servers, s) && s != (hostname+":8080") {
 			*servers = append(*servers, s)
 		}
